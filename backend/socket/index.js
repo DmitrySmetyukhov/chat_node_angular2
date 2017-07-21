@@ -102,9 +102,10 @@ module.exports = function (server) {
         socket.handshake.session.id = sid;
         socket.broadcast.emit('enter', socket.handshake.currentUser.username);
 
-        socket.on('message', function (text, cb) {
-            socket.broadcast.emit('message', socket.handshake.currentUser.username, text);
-            cb(text);
+        socket.on('message', function (text) {
+            console.log(text, 'message');
+            // socket.broadcast.emit('message', socket.handshake.currentUser.username, text);
+            socket.emit('message', 'hello*****')
         });
 
         socket.on('disconnect', function(){

@@ -13,6 +13,7 @@ import {HttpModule} from "@angular/http";
 import {FormsModule} from "@angular/forms";
 import {ProfileComponent} from "./user/profile.component";
 import {PageNotFoundComponent} from "./404/page-not-found.component";
+import {SocketIoService} from "./shared/services/socket-io.service";
 
 
 @NgModule({
@@ -33,7 +34,8 @@ import {PageNotFoundComponent} from "./404/page-not-found.component";
     providers: [
         HttpService,
         AuthService,
-        AuthGuard
+        AuthGuard,
+        SocketIoService
     ],
     bootstrap: [AppComponent]
 })

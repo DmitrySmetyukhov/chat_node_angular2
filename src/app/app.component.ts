@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from "@angular/router";
 import {AuthService} from "./shared/services/auth.service";
+import {SocketIoService} from "./shared/services/socket-io.service";
 
 @Component({
     selector: 'app-root',
@@ -9,11 +10,12 @@ import {AuthService} from "./shared/services/auth.service";
 })
 export class AppComponent implements OnInit{
 
-    constructor(private authService: AuthService, private router: Router) {
+    constructor(private authService: AuthService, private router: Router, private socketIoService: SocketIoService) {
     }
 
     ngOnInit(){
         this.authService.currentUserBackup();
+        this.socketIoService.emitMessage();
     }
 
     isAuthorized() {
