@@ -7,6 +7,7 @@ import {Response} from "@angular/http";
 export class AuthService {
     public currentUser: User;
     private authenticateUrl = 'http://localhost:3000/login';
+    private logoutUrl = 'http://localhost:3000/logout';
 
     constructor(private http: HttpService) {
     }
@@ -18,6 +19,7 @@ export class AuthService {
 
     public logout() {
         this.currentUser = null; //temporary
+        return this.http.post(this.logoutUrl, {});
     }
 
     private extractUser(response: Response) {

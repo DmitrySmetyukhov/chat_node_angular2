@@ -9,7 +9,7 @@ import {AuthService} from "../shared/services/auth.service";
 })
 export class AppComponent {
 
-    constructor(private authService: AuthService) {
+    constructor(private authService: AuthService, private router: Router) {
     }
 
     isAuthorized() {
@@ -18,7 +18,13 @@ export class AppComponent {
 
     logout(event) {
         event.preventDefault();
-        this.authService.logout();
+        this.authService.logout().subscribe(
+            () => {
+                this.authService.currentUser = null;
+                this.router.navigate(['login'])
+            },
+            (err) => {}
+        );
     }
 
 
