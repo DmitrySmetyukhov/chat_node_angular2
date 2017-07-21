@@ -21,18 +21,18 @@ app.set('view engine', 'jade');
 
 
 
-// app.use(function (req, res, next) {
-//     res.header('Access-Control-Allow-Origin', req.headers.origin);
-//     res.header('Access-Control-Allow-Credentials', true);
-//     res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, PATCH, DELETE, OPTIONS');
-//     res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, Authorization');
-//     if (req.method === 'OPTIONS') {
-//         console.log('!OPTIONS');
-//         res.status(200).send();
-//     } else {
-//         next();
-//     }
-// });
+app.use(function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', req.headers.origin);
+    res.header('Access-Control-Allow-Credentials', true);
+    res.header('Access-Control-Allow-Methods', 'POST, GET, PUT, PATCH, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'X-Requested-With, X-HTTP-Method-Override, Content-Type, Accept, Authorization');
+    if (req.method === 'OPTIONS') {
+        console.log('!OPTIONS');
+        res.status(200).send();
+    } else {
+        next();
+    }
+});
 
 
 

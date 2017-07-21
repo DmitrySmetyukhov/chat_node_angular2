@@ -8,18 +8,12 @@ import {AuthService} from "../shared/services/auth.service";
     styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-    title = 'app';
 
-    constructor(private router: Router, private authService: AuthService) {
+    constructor(private authService: AuthService) {
     }
 
     isAuthorized() {
         return !!this.authService.currentUser;
-    }
-
-    goLogin(event) {
-        event.preventDefault();
-        this.router.navigate(['login']);
     }
 
     logout(event) {
@@ -27,18 +21,5 @@ export class AppComponent {
         this.authService.logout();
     }
 
-    goChat(event) {
-        event.preventDefault();
-        this.router.navigate(['chat']);
-    }
 
-    goProfile(event) {
-        event.preventDefault();
-        this.router.navigate(['profile']);
-    }
-
-    goHome(event) {
-        event.preventDefault();
-        this.router.navigate(['home']);
-    }
 }

@@ -23,14 +23,9 @@ export class AuthService {
     private extractUser(response: Response) {
         let res = response.json();
 
-        if (res.length) {
-            return {
-                id: res[0]._id,
-                login: res[0].login,
-                password: res[0].password
-            }
+        if (res) {
+            return new User(res._id, res.username);
         }
-
         return null;
     }
 }

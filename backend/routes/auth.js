@@ -12,13 +12,15 @@ function notFound() {
 
 /* GET home page. */
 router.post('/login', function (req, res, next) {
-    try {
-        var id = new ObjectId(req.body.id);
-    } catch (e) {
-        return next(notFound());
-    }
+    // try {
+    //     var id = new ObjectId(req.body.login);
+    // } catch (e) {
+    //     return next(notFound());
+    // }
 
-    User.findById(id).then(
+    console.log(req.body, 'req.body');
+
+    User.findOne({username: req.body.login} ).then(
         (user) => {
             if (!user) {
                 return next(notFound());
