@@ -6,4 +6,8 @@ export class User {
 
     id: string;
     login: string;
+
+    public toString(){
+        return this.id + ';' + this.login;
+    }
 }
