@@ -31,6 +31,8 @@ mongoose.connect(config.get('mongoose:uri'), config.get('mongoose:options'), fun
 
     var server = http.createServer(app);
 
+    var io = require('../socket')(server);
+
     /**
      * Listen on provided port, on all network interfaces.
      */
