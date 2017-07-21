@@ -13,13 +13,13 @@
   },
   "session": {
     "secret": "87687uyghgvjhgvrdtgiu",
-    "key": "FCsessId",
+    "key": "sessId",
     "resave": false,
     "saveUninitialized": false,
     "cookie": {
       "path": "/",
       "httpOnly": true,
-      "maxAge": 30000
+      "maxAge": 300000
     }
   }
 }
