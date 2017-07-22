@@ -8,7 +8,7 @@ import {User} from "../shared/models/user";
 
 export class LoginComponent{
     constructor(private authService: AuthService, private router: Router) {
-
+        console.log('login component')
     }
 
     login: string;

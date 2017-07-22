@@ -39,6 +39,8 @@ module.exports = function (server) {
         logger : log
     });
 
+    io.set('heartbeat interval', 4);
+
     io.clientsArr = [];
 
 
@@ -95,22 +97,25 @@ module.exports = function (server) {
 
 
     io.sockets.on('connection', function (socket) {
+        // console.log(socket, 'socket');
         io.clientsArr.push(socket);
         console.log('connected');
         socket.handshake.currentUser = tmpUser;
         socket.handshake.session = sess;
         socket.handshake.session.id = sid;
         socket.broadcast.emit('enter', socket.handshake.currentUser.username);
-
+        socket.emit('message', socket.handshake.currentUser,  'hello*****')
         socket.on('message', function (text) {
             console.log(text, 'message');
-            // socket.broadcast.emit('message', socket.handshake.currentUser.username, text);
-            socket.emit('message', 'hello*****')
+            socket.broadcast.emit('message', socket.handshake.currentUser.username, text);
+            socket.emit('message', socket.handshake.currentUser, 'hello*****')
         });
 
         socket.on('disconnect', function(){
             console.log('disconnect');
-            socket.broadcast.emit('leave', socket.handshake.currentUser.username)
+            // socket.broadcast.emit('leave', 'leave**')
+            socket.broadcast.emit('leave', JSON.stringify({user: socket.handshake.currentUser.username, lived_chat: true}))
+            socket.emit('message', 'test','test');
         });
 
     });

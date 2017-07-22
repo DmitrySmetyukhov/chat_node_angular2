@@ -1,49 +1,46 @@
-import { Injectable } from '@angular/core';
-// import {Gist} from './gist/gist.model';
+import {Injectable} from '@angular/core';
 import * as io from 'socket.io-client';
-
 
 @Injectable()
 export class SocketIoService {
     private socket: SocketIOClient.Socket; // The client instance of socket.io
+    messages;
 
-    // Constructor with an injection of ToastService
     constructor() {
-        this.socket = io.connect("http://localhost:3000");
-        this.socket.on('message', function(message){
-            console.log(message, 'message***');
-        })
+        this.messages = [];
+        this.connection(this.messages);
     }
 
-    emitMessage(){
+    connection(messages) {
+        let self = this;
+        this.socket = io.connect("http://localhost:3000");
+        this.socket.on('message', function (user, message) {
+            messages.push({
+                user: user,
+                message: message
+            });
+        });
+
+        this.socket.on('connect', function () {
+            console.log('connected!');
+            self.socket.emit('message', 'frontend connected*****');
+        });
+
+        this.socket.on('leave', function (message) {
+            messages.push({message: message});
+        });
+    }
+
+    emitMessage() {
         this.socket.emit('message', 'hello');
     }
 
-    // Emit: gist saved event
-    // emitEventOnGistSaved(gistSaved){
-    //     this.socket.emit('gistSaved', gistSaved);
-    // }
-    //
-    // // Emit: gist updated event
-    // emitEventOnGistUpdated(gistUpdated){
-    //     this.socket.emit('gistUpdated', gistUpdated);
-    // }
+    disconnect() {
+        this.socket.disconnect();
+        console.log('disconnect()')
+    }
 
-    // Consume: on gist saved
-    // consumeEvenOnGistSaved(){
-    //     var self = this;
-    //     this.socket.on('gistSaved', function(gist: Gist){
-    //         self.toasterService.pop('success', 'NEW GIST SAVED',
-    //             'A gist with title \"' + gist.title + '\" has just been shared' + ' with stack: ' + gist.technologies);
-    //     });
-    // }
-
-    // Consume on gist updated
-    // consumeEvenOnGistUpdated(){
-    //     var self = this;
-    //     this.socket.on('gistUpdated', function(gist: Gist){
-    //         self.toasterService.pop('info', 'GIST UPDATED',
-    //             'A gist with title \"' + gist.title + '\" has just been updated');
-    //     });
-    // }
+    connect() {
+        this.connection(this.messages);
+    }
 }

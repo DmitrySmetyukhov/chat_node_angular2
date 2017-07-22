@@ -1,1 +1,11 @@
 <h1>chat</h1>
+
+<button (click)="disconnect()">disconnect</button>
+<button (click)="connect()">connect</button>
+
+<ul *ngIf="socketService.messages">
+    <li *ngFor="let obj of socketService.messages">
+        {{obj.message}}
+        {{obj.user | json}}
+    </li>
+</ul>

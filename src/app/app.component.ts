@@ -11,9 +11,11 @@ import {SocketIoService} from "./shared/services/socket-io.service";
 export class AppComponent implements OnInit{
 
     constructor(private authService: AuthService, private router: Router, private socketIoService: SocketIoService) {
+        // console.log('app component');
     }
 
     ngOnInit(){
+        console.log('app component init')
         this.authService.currentUserBackup();
         this.socketIoService.emitMessage();
     }
