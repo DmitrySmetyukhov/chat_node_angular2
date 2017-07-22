@@ -2,10 +2,22 @@
 
 <button (click)="disconnect()">disconnect</button>
 <button (click)="connect()">connect</button>
+<div class="row">
+    <div class="col-md-5">
+        <ul *ngIf="socketService.messages">
+            <li *ngFor="let obj of socketService.messages">
+                {{obj.message}}
+                {{obj.user | json}}
+            </li>
+        </ul>
+    </div>
+    <div class="col-md-5">
+        <ul *ngIf="socketService.connectionsIds">
+            <li *ngFor="let id of socketService.connectionsIds">
+                {{id}}
+            </li>
+        </ul>
+    </div>
+</div>
 
-<ul *ngIf="socketService.messages">
-    <li *ngFor="let obj of socketService.messages">
-        {{obj.message}}
-        {{obj.user | json}}
-    </li>
-</ul>
+

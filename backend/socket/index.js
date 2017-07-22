@@ -97,14 +97,24 @@ module.exports = function (server) {
 
 
     io.sockets.on('connection', function (socket) {
-        console.log(socket.id, 'socket');
-        io.clientsArr.push(socket);
+        // console.log(socket.id, 'socket');
+        let connectionsIds = [];
+        for(let prop in io.sockets.connected){
+            // console.log(io.sockets.connected[prop].id, 'connection id');
+            connectionsIds.push(io.sockets.connected[prop].id)
+        }
+
+        // console.log(connectionsIds, 'connectionsIds')
+
         console.log('connected');
+
         socket.handshake.currentUser = tmpUser;
         socket.handshake.session = sess;
         socket.handshake.session.id = sid;
-        socket.broadcast.emit('enter', socket.handshake.currentUser.username);
-        socket.emit('message', socket.handshake.currentUser,  'hello*****')
+
+        socket.broadcast.emit('enter', connectionsIds);
+
+        socket.emit('message', socket.handshake.currentUser,  'hello*****');
         socket.on('message', function (text) {
             console.log(text, 'message');
             socket.broadcast.emit('message', socket.handshake.currentUser.username, text);

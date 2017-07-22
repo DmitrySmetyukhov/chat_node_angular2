@@ -5,13 +5,15 @@ import * as io from 'socket.io-client';
 export class SocketIoService {
     private socket: SocketIOClient.Socket; // The client instance of socket.io
     messages;
+    connectionsIds;
 
     constructor() {
+        this.connectionsIds = ['kjdckj', '65465'];
         this.messages = [];
-        this.connection(this.messages);
+        this.connection(this.messages, this.connectionsIds);
     }
 
-    connection(messages) {
+    connection(messages, connections) {
         let self = this;
         this.socket = io.connect("http://localhost:3000");
         this.socket.on('message', function (user, message) {
@@ -30,7 +32,14 @@ export class SocketIoService {
             messages.push({message: message});
         });
 
-        this.socket.on('private', function(message){
+        this.socket.on('enter', function (connIds) {
+            connections.length = 0;
+            connIds.forEach((id) => {
+                connections.push(id);
+            })
+        });
+
+        this.socket.on('private', function (message) {
             messages.push({message: message});
         })
     }
@@ -45,6 +54,6 @@ export class SocketIoService {
     }
 
     connect() {
-        this.connection(this.messages);
+        this.connection(this.messages, this.connectionsIds);
     }
 }
