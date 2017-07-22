@@ -97,7 +97,7 @@ module.exports = function (server) {
 
 
     io.sockets.on('connection', function (socket) {
-        // console.log(socket, 'socket');
+        console.log(socket.id, 'socket');
         io.clientsArr.push(socket);
         console.log('connected');
         socket.handshake.currentUser = tmpUser;
@@ -118,7 +118,11 @@ module.exports = function (server) {
             socket.emit('message', 'test','test');
         });
 
+        io.sockets.connected[socket.id].emit('private', socket.handshake.currentUser.username);
+
     });
+
+
 
     return io;
 

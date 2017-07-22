@@ -29,6 +29,10 @@ export class SocketIoService {
         this.socket.on('leave', function (message) {
             messages.push({message: message});
         });
+
+        this.socket.on('private', function(message){
+            messages.push({message: message});
+        })
     }
 
     emitMessage() {
