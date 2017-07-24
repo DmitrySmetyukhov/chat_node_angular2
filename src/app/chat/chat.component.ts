@@ -6,7 +6,10 @@ import {SocketIoService} from "../shared/services/socket-io.service";
 })
 
 export class ChatComponent {
+    objectKeys = Object.keys;
+
     constructor(private socketService: SocketIoService) {
+
     }
 
     connect() {

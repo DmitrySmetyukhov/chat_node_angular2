@@ -12,12 +12,15 @@
         </ul>
     </div>
     <div class="col-md-5">
-        <ul *ngIf="socketService.connectionsIds">
-            <li *ngFor="let id of socketService.connectionsIds">
-                {{id}}
+        <ul *ngIf="socketService.actualConnections">
+            <li *ngFor="let key of objectKeys(socketService.actualConnections)">
+                {{key}}
+                {{socketService.actualConnections[key]}}
             </li>
         </ul>
     </div>
+
+
 </div>
 
 

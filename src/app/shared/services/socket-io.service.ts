@@ -1,16 +1,19 @@
 import {Injectable} from '@angular/core';
 import * as io from 'socket.io-client';
 
+
 @Injectable()
 export class SocketIoService {
+
     private socket: SocketIOClient.Socket; // The client instance of socket.io
     messages;
-    connectionsIds;
+    actualConnections = {};
+
+
 
     constructor() {
-        this.connectionsIds = ['kjdckj', '65465'];
         this.messages = [];
-        this.connection(this.messages, this.connectionsIds);
+        this.connection(this.messages, this.actualConnections);
     }
 
     connection(messages, connections) {
@@ -28,15 +31,24 @@ export class SocketIoService {
             self.socket.emit('message', 'frontend connected*****');
         });
 
-        this.socket.on('leave', function (message) {
-            messages.push({message: message});
+        this.socket.on('leave', function (username) {
+            delete connections[username];
         });
 
-        this.socket.on('enter', function (connIds) {
-            connections.length = 0;
-            connIds.forEach((id) => {
-                connections.push(id);
-            })
+        this.socket.on('selfEnter', function (actualConnections) {
+
+            for(let key in connections){
+                delete connections[key]
+            }
+
+            for(let key in actualConnections){
+                connections[key] = actualConnections[key];
+            }
+        });
+
+
+        this.socket.on('newConnection', function(connectionInfo){
+            connections[connectionInfo.username] = connectionInfo.connectionId;
         });
 
         this.socket.on('private', function (message) {
@@ -50,10 +62,13 @@ export class SocketIoService {
 
     disconnect() {
         this.socket.disconnect();
+        for(let key in this.actualConnections){
+            delete this.actualConnections[key]
+        }
         console.log('disconnect()')
     }
 
     connect() {
-        this.connection(this.messages, this.connectionsIds);
+        this.connection(this.messages, this.actualConnections);
     }
 }

@@ -8,6 +8,7 @@ var sessionStorage = require('../lib/sessionStore');
 var tmpUser;
 var sess;
 var sid;
+var actualConnections;
 
 
 module.exports = function (server) {
@@ -41,7 +42,7 @@ module.exports = function (server) {
 
     io.set('heartbeat interval', 4);
 
-    io.clientsArr = [];
+    actualConnections = {};
 
 
     io.set('authorization', function (handshakeData, callback) {
@@ -97,14 +98,6 @@ module.exports = function (server) {
 
 
     io.sockets.on('connection', function (socket) {
-        // console.log(socket.id, 'socket');
-        let connectionsIds = [];
-        for(let prop in io.sockets.connected){
-            // console.log(io.sockets.connected[prop].id, 'connection id');
-            connectionsIds.push(io.sockets.connected[prop].id)
-        }
-
-        // console.log(connectionsIds, 'connectionsIds')
 
         console.log('connected');
 
@@ -112,7 +105,13 @@ module.exports = function (server) {
         socket.handshake.session = sess;
         socket.handshake.session.id = sid;
 
-        socket.broadcast.emit('enter', connectionsIds);
+        actualConnections[ socket.handshake.currentUser.username] = socket.id;
+
+        socket.broadcast.emit('newConnection', {
+            username: socket.handshake.currentUser.username,
+            connectionId: socket.id
+        });
+        socket.emit('selfEnter', actualConnections);
 
         socket.emit('message', socket.handshake.currentUser,  'hello*****');
         socket.on('message', function (text) {
@@ -123,9 +122,8 @@ module.exports = function (server) {
 
         socket.on('disconnect', function(){
             console.log('disconnect');
-            // socket.broadcast.emit('leave', 'leave**')
-            socket.broadcast.emit('leave', JSON.stringify({user: socket.handshake.currentUser.username, lived_chat: true}))
-            socket.emit('message', 'test','test');
+            socket.broadcast.emit('leave', socket.handshake.currentUser.username);
+            delete actualConnections[socket.handshake.currentUser.username];
         });
 
         io.sockets.connected[socket.id].emit('private', socket.handshake.currentUser.username);
