@@ -8,15 +8,17 @@ export class SocketIoService {
     private socket: SocketIOClient.Socket; // The client instance of socket.io
     messages;
     actualConnections = {};
+    connectionState = {};
 
 
 
     constructor() {
         this.messages = [];
-        this.connection(this.messages, this.actualConnections);
+        this.connectionState = {};
+        this.connection(this.messages, this.actualConnections, this.connectionState);
     }
 
-    connection(messages, connections) {
+    connection(messages, connections, connectionState) {
         let self = this;
         this.socket = io.connect("http://localhost:3000");
         this.socket.on('message', function (user, message) {
@@ -28,6 +30,7 @@ export class SocketIoService {
 
         this.socket.on('connect', function () {
             console.log('connected!');
+            connectionState.isConnected = true;
             self.socket.emit('message', 'frontend connected*****');
         });
 
@@ -65,10 +68,12 @@ export class SocketIoService {
         for(let key in this.actualConnections){
             delete this.actualConnections[key]
         }
+
+        this.connectionState['isConnected'] = null;
         console.log('disconnect()')
     }
 
     connect() {
-        this.connection(this.messages, this.actualConnections);
+        this.connection(this.messages, this.actualConnections, this.connectionState);
     }
 }
