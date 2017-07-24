@@ -15,7 +15,12 @@ export class SocketIoService {
     constructor() {
         this.messages = [];
         this.connectionState = {};
-        this.connection(this.messages, this.actualConnections, this.connectionState);
+    }
+
+    setConnection(){
+        if(!this.connectionState['isConnected']){
+            this.connection(this.messages, this.actualConnections, this.connectionState);
+        }
     }
 
     connection(messages, connections, connectionState) {

@@ -14,6 +14,7 @@ import {FormsModule} from "@angular/forms";
 import {ProfileComponent} from "./user/profile.component";
 import {PageNotFoundComponent} from "./404/page-not-found.component";
 import {SocketIoService} from "./shared/services/socket-io.service";
+import {AccordionModule} from "ngx-bootstrap";
 
 
 @NgModule({
@@ -29,7 +30,8 @@ import {SocketIoService} from "./shared/services/socket-io.service";
         BrowserModule,
         MainRouterModule,
         HttpModule,
-        FormsModule
+        FormsModule,
+        AccordionModule.forRoot()
     ],
     providers: [
         HttpService,

@@ -7,7 +7,7 @@
 <button (click)="disconnect()" *ngIf="socketService.connectionState.isConnected">disconnect</button>
 <button (click)="connect()" *ngIf="!socketService.connectionState.isConnected">connect</button>
 <div class="row">
-    <div class="col-md-5">
+    <div class="col-md-3">
         <ul *ngIf="socketService.messages">
             <li *ngFor="let obj of socketService.messages">
                 {{obj.message}}
@@ -15,7 +15,7 @@
             </li>
         </ul>
     </div>
-    <div class="col-md-5">
+    <div class="col-md-2">
         <ul *ngIf="socketService.actualConnections">
             <li *ngFor="let key of objectKeys(socketService.actualConnections)">
                 {{key}}
@@ -25,6 +25,30 @@
     </div>
 
 
+    <div class="col-md-5">
+        <accordion>
+
+            <accordion-group #group>
+                <div accordion-heading>
+                    I can have markup, too!
+                    <i class="pull-right float-xs-right glyphicon"
+                       [ngClass]="{'glyphicon-chevron-down': group?.isOpen, 'glyphicon-chevron-right': !group?.isOpen}"></i>
+                </div>
+                This is just some content to illustrate fancy headings.
+
+
+                <ul>
+                    <li *ngFor="let i of [1,2,3]">
+                        <div>field</div>
+                        <div>______________________</div>
+                    </li>
+                </ul>
+
+
+            </accordion-group>
+
+        </accordion>
+    </div>
 </div>
 
 

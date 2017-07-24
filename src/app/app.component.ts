@@ -8,16 +8,16 @@ import {SocketIoService} from "./shared/services/socket-io.service";
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit{
+export class AppComponent implements OnInit {
 
-    constructor(private authService: AuthService, private router: Router, private socketIoService: SocketIoService) {
-        // console.log('app component');
+    constructor(private authService: AuthService,
+                private router: Router,
+                private socketIoService: SocketIoService) {
+        console.log('app component');
     }
 
-    ngOnInit(){
-        console.log('app component init')
+    ngOnInit() {
         this.authService.currentUserBackup();
-        this.socketIoService.emitMessage();
     }
 
     isAuthorized() {
@@ -29,9 +29,11 @@ export class AppComponent implements OnInit{
         this.authService.logout().subscribe(
             () => {
                 this.authService.currentUser = null;
-                this.router.navigate(['login'])
+                this.socketIoService.disconnect();
+                this.router.navigate(['login']);
             },
-            (err) => {}
+            (err) => {
+            }
         );
     }
 
