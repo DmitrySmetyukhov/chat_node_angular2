@@ -30,17 +30,15 @@
 
             <accordion-group #group>
                 <div accordion-heading>
-                    I can have markup, too!
+                    Public messages
                     <i class="pull-right float-xs-right glyphicon"
                        [ngClass]="{'glyphicon-chevron-down': group?.isOpen, 'glyphicon-chevron-right': !group?.isOpen}"></i>
                 </div>
-                This is just some content to illustrate fancy headings.
-
 
                 <ul>
-                    <li *ngFor="let i of [1,2,3]">
-                        <div>field</div>
-                        <div>______________________</div>
+                    <li *ngFor="let obj of socketService.messages">
+                        {{obj.user | json}}:
+                        {{obj.message}}
                     </li>
                 </ul>
 
@@ -48,9 +46,8 @@
             </accordion-group>
             <accordion-group>
                 <div accordion-heading>
-                    accordion-heading
+                    message form
                 </div>
-                hello
                 <form [formGroup]="messageForm" (ngSubmit)="onSubmit(messageForm)">
                    Message: <input
                         type="text"
