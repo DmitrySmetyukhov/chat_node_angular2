@@ -1,5 +1,9 @@
 <h1>chat</h1>
 
+<div >
+    {{socketService.connectionState | json}}
+</div>
+
 <button (click)="disconnect()" *ngIf="socketService.connectionState.isConnected">disconnect</button>
 <button (click)="connect()" *ngIf="!socketService.connectionState.isConnected">connect</button>
 <div class="row">

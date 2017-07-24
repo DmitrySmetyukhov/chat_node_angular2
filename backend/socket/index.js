@@ -111,13 +111,17 @@ module.exports = function (server) {
             username: socket.handshake.currentUser.username,
             connectionId: socket.id
         });
-        socket.emit('selfEnter', actualConnections);
 
-        socket.emit('message', socket.handshake.currentUser,  'hello*****');
+        socket.emit('stateInitial', actualConnections, {
+            username: socket.handshake.currentUser.username,
+            connectionId: socket.id
+        });
+
+
         socket.on('message', function (text) {
             console.log(text, 'message');
             socket.broadcast.emit('message', socket.handshake.currentUser.username, text);
-            socket.emit('message', socket.handshake.currentUser, 'hello*****')
+            socket.emit('message', socket.handshake.currentUser.username, text)
         });
 
         socket.on('disconnect', function(){
@@ -126,7 +130,8 @@ module.exports = function (server) {
             delete actualConnections[socket.handshake.currentUser.username];
         });
 
-        io.sockets.connected[socket.id].emit('private', socket.handshake.currentUser.username);
+        // io.sockets.connected[socket.id].emit('private', socket.handshake.currentUser.username);
+
 
     });
 

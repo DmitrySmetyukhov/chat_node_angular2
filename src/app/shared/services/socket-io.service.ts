@@ -31,15 +31,21 @@ export class SocketIoService {
         this.socket.on('connect', function () {
             console.log('connected!');
             connectionState.isConnected = true;
-            self.socket.emit('message', 'frontend connected*****');
+            self.socket.emit('state', 'frontend connected*****');
         });
 
         this.socket.on('leave', function (username) {
             delete connections[username];
+            messages.push({
+                message: username + ' lived chat.'
+            });
         });
 
-        this.socket.on('selfEnter', function (actualConnections) {
+        this.socket.on('stateInitial', function (actualConnections, connectionInfo) {
 
+            console.log(connectionInfo, 'connection info')
+            connectionState['username'] = connectionInfo.username;
+            connectionState['connectionId'] = connectionInfo.connectionId;
             for(let key in connections){
                 delete connections[key]
             }
@@ -47,16 +53,22 @@ export class SocketIoService {
             for(let key in actualConnections){
                 connections[key] = actualConnections[key];
             }
+
+
         });
 
 
         this.socket.on('newConnection', function(connectionInfo){
             connections[connectionInfo.username] = connectionInfo.connectionId;
+            messages.push({
+                message: connectionInfo.username + ' connected'
+            })
         });
 
-        this.socket.on('private', function (message) {
-            messages.push({message: message});
-        })
+        this.socket.on('private', function (stateMessage) {
+            // messages.push({message: message});
+            console.log(stateMessage, 'stateMessage');
+        });
     }
 
     emitMessage() {
