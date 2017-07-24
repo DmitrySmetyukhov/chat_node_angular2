@@ -6,24 +6,26 @@ import * as io from 'socket.io-client';
 export class SocketIoService {
 
     private socket: SocketIOClient.Socket; // The client instance of socket.io
-    messages;
+    messages = [];
+    privateMessages = [];
     actualConnections = {};
     connectionState = {};
+    adresat: string;
 
 
+    // constructor() {}
 
-    constructor() {
-        this.messages = [];
-        this.connectionState = {};
-    }
-
-    setConnection(){
-        if(!this.connectionState['isConnected']){
-            this.connection(this.messages, this.actualConnections, this.connectionState);
+    setConnection() {
+        if (!this.connectionState['isConnected']) {
+            this.connection(
+                this.messages,
+                this.privateMessages,
+                this.actualConnections,
+                this.connectionState);
         }
     }
 
-    connection(messages, connections, connectionState) {
+    connection(messages, privateMessages, connections, connectionState) {
         let self = this;
         this.socket = io.connect("http://localhost:3000");
         this.socket.on('message', function (user, message) {
@@ -47,32 +49,32 @@ export class SocketIoService {
         });
 
         this.socket.on('stateInitial', function (actualConnections, connectionInfo) {
-
-            console.log(connectionInfo, 'connection info')
+            // console.log(connectionInfo, 'connection info')
             connectionState['username'] = connectionInfo.username;
             connectionState['connectionId'] = connectionInfo.connectionId;
-            for(let key in connections){
+            for (let key in connections) {
                 delete connections[key]
             }
 
-            for(let key in actualConnections){
+            for (let key in actualConnections) {
                 connections[key] = actualConnections[key];
             }
-
 
         });
 
 
-        this.socket.on('newConnection', function(connectionInfo){
+        this.socket.on('newConnection', function (connectionInfo) {
             connections[connectionInfo.username] = connectionInfo.connectionId;
             messages.push({
                 message: connectionInfo.username + ' connected'
             })
         });
 
-        this.socket.on('private', function (stateMessage) {
-            // messages.push({message: message});
-            console.log(stateMessage, 'stateMessage');
+        this.socket.on('private', function (message, fromName) {
+            privateMessages.push({
+                message: message,
+                user: fromName
+            })
         });
     }
 
@@ -80,9 +82,13 @@ export class SocketIoService {
         this.socket.emit('message', message);
     }
 
+    sendPrivateMessage(message) {
+        this.socket.emit('private', message, this.connectionState['username'], this.adresat);
+    }
+
     disconnect() {
         this.socket.disconnect();
-        for(let key in this.actualConnections){
+        for (let key in this.actualConnections) {
             delete this.actualConnections[key]
         }
 
@@ -91,6 +97,11 @@ export class SocketIoService {
     }
 
     connect() {
-        this.connection(this.messages, this.actualConnections, this.connectionState);
+        this.connection(
+            this.messages,
+            this.privateMessages,
+            this.actualConnections,
+            this.connectionState
+        );
     }
 }

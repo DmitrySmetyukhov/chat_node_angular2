@@ -124,6 +124,14 @@ module.exports = function (server) {
             socket.emit('message', socket.handshake.currentUser.username, text)
         });
 
+        socket.on('private', function(message, fromName, toAdresat){
+            console.log(toAdresat, 'toAdresat');
+
+            io.sockets.connected[toAdresat.connectionId].emit('private',
+                message, fromName
+            )
+        });
+
         socket.on('disconnect', function(){
             console.log('disconnect');
             socket.broadcast.emit('leave', socket.handshake.currentUser.username);

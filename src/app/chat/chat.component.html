@@ -1,27 +1,29 @@
 <h1>chat</h1>
 
-<div >
-    {{socketService.connectionState | json}}
-</div>
 
-<button (click)="disconnect()" *ngIf="socketService.connectionState.isConnected">disconnect</button>
-<button (click)="connect()" *ngIf="!socketService.connectionState.isConnected">connect</button>
 <div class="row">
-    <div class="col-md-3">
-        <ul *ngIf="socketService.messages">
-            <li *ngFor="let obj of socketService.messages">
-                {{obj.message}}
-                {{obj.user | json}}
-            </li>
-        </ul>
-    </div>
-    <div class="col-md-2">
-        <ul *ngIf="socketService.actualConnections">
-            <li *ngFor="let key of objectKeys(socketService.actualConnections)">
-                {{key}}
-                {{socketService.actualConnections[key]}}
-            </li>
-        </ul>
+    <div class="col-md-1"></div>
+    <div class="col-md-4">
+        <div>
+            {{socketService.connectionState | json}}
+        </div>
+
+        <button (click)="disconnect()" *ngIf="socketService.connectionState.isConnected">disconnect</button>
+        <button (click)="connect()" *ngIf="!socketService.connectionState.isConnected">connect</button>
+        <!--<ul *ngIf="socketService.messages">-->
+            <!--<li *ngFor="let obj of socketService.messages">-->
+                <!--{{obj.message}}-->
+                <!--{{obj.user | json}}-->
+            <!--</li>-->
+        <!--</ul>-->
+    <!--</div>-->
+    <!--<div class="col-md-2">-->
+        <!--<ul *ngIf="socketService.actualConnections">-->
+            <!--<li *ngFor="let key of objectKeys(socketService.actualConnections)">-->
+                <!--{{key}}-->
+                <!--{{socketService.actualConnections[key]}}-->
+            <!--</li>-->
+        <!--</ul>-->
     </div>
 
 
@@ -41,19 +43,58 @@
                         {{obj.message}}
                     </li>
                 </ul>
-
-
             </accordion-group>
+
+
+            <accordion-group>
+                <div accordion-heading>
+                    Private messages
+                </div>
+                <div class="row">
+                    <ul>
+                        <li *ngFor="let obj of socketService.privateMessages">
+                            {{obj.user}}
+                            {{obj.message}}
+                        </li>
+                    </ul>
+                </div>
+            </accordion-group>
+
             <accordion-group>
                 <div accordion-heading>
                     message form
                 </div>
-                <form [formGroup]="messageForm" (ngSubmit)="onSubmit(messageForm)">
-                   Message: <input
-                        type="text"
-                        formControlName="newMessage"
-                >
-                </form>
+                <div class="row">
+                    <div class="col-md-4">
+                        Message to
+                        <span *ngIf="socketService.adresat">{{socketService.adresat.username}}</span>
+                        <span *ngIf="!socketService.adresat"> all</span>
+                        <form [formGroup]="messageForm" (ngSubmit)="onSubmit(messageForm)">
+                            Message:
+                            <input
+                                    type="text"
+                                    formControlName="newMessage"
+                            >
+                        </form>
+                    </div>
+                    <div class="col-md-6">
+
+                        <ul *ngIf="socketService.actualConnections">
+                            <li>
+                                <a href="#" (click)="selectUser(null, $event)">all</a>
+                            </li>
+                            <li *ngFor="let key of objectKeys(socketService.actualConnections)"
+                            >
+                                <a href="#" (click)="selectUser({
+                                    connectionId: socketService.actualConnections[key],
+                                    username: key
+                                }, $event)">{{key}}</a>
+                                {{socketService.actualConnections[key]}}
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
             </accordion-group>
 
         </accordion>

@@ -13,6 +13,7 @@ export class ChatComponent implements OnInit {
     messageForm: FormGroup;
     newMessage;
 
+
     constructor(private socketService: SocketIoService, private fb: FormBuilder) {
 
     }
@@ -28,10 +29,21 @@ export class ChatComponent implements OnInit {
         })
     }
 
-    onSubmit(form){
-        if(form.invalid) return;
-        this.socketService.emitToAll(form.value.newMessage);
+    onSubmit(form) {
+        if (form.invalid) return;
+        if (!this.socketService.adresat) {
+            this.socketService.emitToAll(form.value.newMessage);
+        } else {
+            this.socketService.sendPrivateMessage(form.value.newMessage)
+        }
+
         form.reset();
+    }
+
+    selectUser(key, event) {
+        event.preventDefault();
+        console.log(key, 'key');
+        this.socketService.adresat = key;
     }
 
 
