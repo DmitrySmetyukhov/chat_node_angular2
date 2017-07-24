@@ -1,0 +1,32 @@
+.platform {
+    height: 100px;
+}
+
+.chat {
+    height: 100%;
+}
+
+.chat-field {
+    height: 80%;
+    background-color: #bdfff5;
+}
+
+.messages-field {
+    height: 20%;
+    background-color: lavenderblush;
+}
+
+.messages-field form{
+    height:100%;
+}
+
+.messages-field .message-box{
+    width: 100%;
+    height: 100%;
+}
+
+.users-list {
+    border-right: 2px solid green;
+    height: 100%;
+    background-color: beige;
+}

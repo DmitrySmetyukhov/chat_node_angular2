@@ -5,7 +5,7 @@ import {FormGroup, FormBuilder, Validators} from "@angular/forms";
 
 @Component({
     templateUrl: 'chat.component.html',
-    styleUrls: ['chat.css']
+    styleUrls: ['chat.css', 'platform.css']
 })
 
 export class ChatComponent implements OnInit {

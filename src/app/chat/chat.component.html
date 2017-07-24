@@ -69,13 +69,13 @@
                         Message to
                         <span *ngIf="socketService.adresat">{{socketService.adresat.username}}</span>
                         <span *ngIf="!socketService.adresat"> all</span>
-                        <form [formGroup]="messageForm" (ngSubmit)="onSubmit(messageForm)">
-                            Message:
-                            <input
-                                    type="text"
-                                    formControlName="newMessage"
-                            >
-                        </form>
+                        <!--<form [formGroup]="messageForm" (ngSubmit)="onSubmit(messageForm)">-->
+                            <!--Message:-->
+                            <!--<input-->
+                                    <!--type="text"-->
+                                    <!--formControlName="newMessage"-->
+                            <!--&gt;-->
+                        <!--</form>-->
                     </div>
                     <div class="col-md-6">
 
@@ -94,6 +94,48 @@
                         </ul>
                     </div>
 
+                </div>
+            </accordion-group>
+
+
+
+            <accordion-group>
+                <div accordion-heading>
+                    Platform
+                </div>
+                <div class="row platform">
+                    <div class="col-md-3 users-list">
+                        users
+                        <ul *ngIf="socketService.actualConnections">
+                            <li>
+                                <a href="#" (click)="selectUser(null, $event)">all</a>
+                            </li>
+                            <li *ngFor="let key of objectKeys(socketService.actualConnections)"
+                            >
+                                <a href="#" (click)="selectUser({
+                                    connectionId: socketService.actualConnections[key],
+                                    username: key
+                                }, $event)">{{key}}</a>
+
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-9 chat">
+                        <div class="chat-field">
+                            chat field
+                        </div>
+                        <div class="messages-field">
+                            <!--messages-->
+                            <form [formGroup]="messageForm" (ngSubmit)="onSubmit(messageForm)" >
+
+                                <input
+                                        class="message-box"
+                                        type="text"
+                                        formControlName="newMessage"
+                                >
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </accordion-group>
 
