@@ -46,6 +46,18 @@
 
 
             </accordion-group>
+            <accordion-group>
+                <div accordion-heading>
+                    accordion-heading
+                </div>
+                hello
+                <form [formGroup]="messageForm" (ngSubmit)="onSubmit(messageForm)">
+                   Message: <input
+                        type="text"
+                        formControlName="newMessage"
+                >
+                </form>
+            </accordion-group>
 
         </accordion>
     </div>

@@ -76,8 +76,8 @@ export class SocketIoService {
         });
     }
 
-    emitMessage() {
-        this.socket.emit('message', 'hello');
+    emitToAll(message) {
+        this.socket.emit('message', message);
     }
 
     disconnect() {

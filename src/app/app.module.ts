@@ -10,7 +10,7 @@ import {LoginComponent} from "./auth/login.component";
 import {ChatComponent} from "./chat/chat.component";
 import {AuthGuard} from "./shared/services/guards/auth-guard.service";
 import {HttpModule} from "@angular/http";
-import {FormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {ProfileComponent} from "./user/profile.component";
 import {PageNotFoundComponent} from "./404/page-not-found.component";
 import {SocketIoService} from "./shared/services/socket-io.service";
@@ -31,7 +31,8 @@ import {AccordionModule} from "ngx-bootstrap";
         MainRouterModule,
         HttpModule,
         FormsModule,
-        AccordionModule.forRoot()
+        AccordionModule.forRoot(),
+        ReactiveFormsModule
     ],
     providers: [
         HttpService,
