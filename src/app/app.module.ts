@@ -16,7 +16,6 @@ import {PageNotFoundComponent} from "./404/page-not-found.component";
 import {SocketIoService} from "./shared/services/socket-io.service";
 import {AccordionModule} from "ngx-bootstrap";
 
-
 @NgModule({
     declarations: [
         AppComponent,

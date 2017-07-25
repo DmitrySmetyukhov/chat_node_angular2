@@ -101,9 +101,18 @@ module.exports = function (server) {
 
         console.log('connected');
 
+        // var uuid = require('uuid');
+        // var room = uuid.v4();
+
+
+        // console.log(socket.adapter.rooms, 'rooms');
+
         socket.handshake.currentUser = tmpUser;
         socket.handshake.session = sess;
         socket.handshake.session.id = sid;
+
+        // var room = socket.handshake.currentUser.username;
+        // socket.join(room);
 
         actualConnections[ socket.handshake.currentUser.username] = socket.id;
 
@@ -124,12 +133,13 @@ module.exports = function (server) {
             socket.emit('message', socket.handshake.currentUser.username, text)
         });
 
-        socket.on('private', function(message, fromName, toAdresat){
-            console.log(toAdresat, 'toAdresat');
+        socket.on('private', function(message, sender, reseiver){
 
-            io.sockets.connected[toAdresat.connectionId].emit('private',
-                message, fromName
-            )
+            io.sockets.connected[reseiver.connectionId].emit('private',
+                {direction: 'receive', text: message}, sender.username
+            );
+
+            io.sockets.connected[sender.connectionId].emit('private', {direction: 'send', text: message}, reseiver.username)
         });
 
         socket.on('disconnect', function(){
@@ -140,6 +150,7 @@ module.exports = function (server) {
 
         // io.sockets.connected[socket.id].emit('private', socket.handshake.currentUser.username);
 
+        // io.sockets.to(room).emit('message', socket.handshake.currentUser.username, 'testRoom');
 
     });
 

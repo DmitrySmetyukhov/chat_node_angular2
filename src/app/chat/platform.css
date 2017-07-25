@@ -1,5 +1,5 @@
 .platform {
-    height: 100px;
+    height: 400px;
 }
 
 .chat {
@@ -9,6 +9,7 @@
 .chat-field {
     height: 80%;
     background-color: #bdfff5;
+    overflow: scroll;
 }
 
 .messages-field {
@@ -16,11 +17,11 @@
     background-color: lavenderblush;
 }
 
-.messages-field form{
-    height:100%;
+.messages-field form {
+    height: 100%;
 }
 
-.messages-field .message-box{
+.messages-field .message-box {
     width: 100%;
     height: 100%;
 }
@@ -30,3 +31,7 @@
     height: 100%;
     background-color: beige;
 }
+
+/*.active {*/
+    /*color: brown;*/
+/*}*/

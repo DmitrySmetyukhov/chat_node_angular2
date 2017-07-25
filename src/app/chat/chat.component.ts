@@ -12,6 +12,7 @@ export class ChatComponent implements OnInit {
     objectKeys = Object.keys;
     messageForm: FormGroup;
     newMessage;
+    privateMessages;
 
 
     constructor(private socketService: SocketIoService, private fb: FormBuilder) {
@@ -40,12 +41,20 @@ export class ChatComponent implements OnInit {
         form.reset();
     }
 
-    selectUser(key, event) {
-        event.preventDefault();
-        console.log(key, 'key');
-        this.socketService.adresat = key;
+    onKey(event: KeyboardEvent, form) {
+        if (event.key === 'Enter') {
+            this.onSubmit(form);
+        }
     }
 
+    selectUser(connection, event) {
+        event.preventDefault();
+        this.socketService.adresat = connection;
+
+        if (this.socketService.adresat) {
+            this.socketService.getPrivateRoomMessages(this.socketService.adresat['username']);
+        }
+    }
 
     connect() {
         this.socketService.connect();

@@ -8,6 +8,7 @@ export class SocketIoService {
     private socket: SocketIOClient.Socket; // The client instance of socket.io
     messages = [];
     privateMessages = [];
+    currentRoomMessages = [];
     actualConnections = {};
     connectionState = {};
     adresat: string;
@@ -18,19 +19,21 @@ export class SocketIoService {
     setConnection() {
         if (!this.connectionState['isConnected']) {
             this.connection(
+                this,
                 this.messages,
                 this.privateMessages,
+                this.currentRoomMessages,
                 this.actualConnections,
                 this.connectionState);
         }
     }
 
-    connection(messages, privateMessages, connections, connectionState) {
+    connection(state, messages, privateMessages, currentRoomMessages, connections, connectionState) {
         let self = this;
         this.socket = io.connect("http://localhost:3000");
-        this.socket.on('message', function (user, message) {
+        this.socket.on('message', function (username, message) {
             messages.push({
-                user: user,
+                username: username,
                 message: message
             });
         });
@@ -49,7 +52,6 @@ export class SocketIoService {
         });
 
         this.socket.on('stateInitial', function (actualConnections, connectionInfo) {
-            // console.log(connectionInfo, 'connection info')
             connectionState['username'] = connectionInfo.username;
             connectionState['connectionId'] = connectionInfo.connectionId;
             for (let key in connections) {
@@ -57,9 +59,10 @@ export class SocketIoService {
             }
 
             for (let key in actualConnections) {
-                connections[key] = actualConnections[key];
+                if (connectionInfo.username !== key) {
+                    connections[key] = actualConnections[key];
+                }
             }
-
         });
 
 
@@ -70,11 +73,24 @@ export class SocketIoService {
             })
         });
 
-        this.socket.on('private', function (message, fromName) {
+        this.socket.on('private', function (message, sender) {
             privateMessages.push({
-                message: message,
-                user: fromName
-            })
+                message: message.text,
+                username: sender,
+                direction: message.direction
+            });
+
+            state.getPrivateRoomMessages(sender);
+        });
+    }
+
+
+    getPrivateRoomMessages(username){
+        this.currentRoomMessages.length = 0;
+        this.privateMessages.forEach((message) => {
+            if(message['username'] == username){
+                this.currentRoomMessages.push(message);
+            }
         });
     }
 
@@ -83,7 +99,12 @@ export class SocketIoService {
     }
 
     sendPrivateMessage(message) {
-        this.socket.emit('private', message, this.connectionState['username'], this.adresat);
+        let sender = {
+            connectionId: this.connectionState['connectionId'],
+            username: this.connectionState['username']
+        };
+
+        this.socket.emit('private', message, sender, this.adresat);
     }
 
     disconnect() {
@@ -98,8 +119,10 @@ export class SocketIoService {
 
     connect() {
         this.connection(
+            this,
             this.messages,
             this.privateMessages,
+            this.currentRoomMessages,
             this.actualConnections,
             this.connectionState
         );
