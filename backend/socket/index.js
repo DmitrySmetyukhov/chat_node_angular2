@@ -98,77 +98,90 @@ module.exports = function (server) {
 
     io.sockets.on('connection', function (socket) {
 
-        console.log('connected');
+            console.log('connected');
 
-        // var uuid = require('uuid');
-        // var room = uuid.v4();
-
-
-        // console.log(socket.adapter.rooms, 'rooms');
-
-        socket.handshake.currentUser = tmpUser.username;
-        // socket.handshake.session = sess;
-        // socket.handshake.session.id = sid;
-
-        // var room = socket.handshake.currentUser.username;
-        // socket.join(room);
-
-        actualConnections[socket.handshake.currentUser] = socket.id;
-
-        socket.broadcast.emit('newConnection', {
-            username    : socket.handshake.currentUser,
-            connectionId: socket.id
-        });
-
-        socket.emit('stateInitial', actualConnections, {
-            username    : socket.handshake.currentUser,
-            connectionId: socket.id
-        });
+            // var uuid = require('uuid');
+            // var room = uuid.v4();
 
 
-        Message.find({$or: [{'sender': socket.handshake.currentUser}, {'receiver': socket.handshake.currentUser}]})
-            .then((privateMessages) => {
-                socket.emit('initialMessagesBackup', privateMessages)
-            }).catch((err) => console.log(err, 'error'));
+            // console.log(socket.adapter.rooms, 'rooms');
+
+            socket.handshake.currentUser = tmpUser.username;
+            // socket.handshake.session = sess;
+            // socket.handshake.session.id = sid;
+
+            // var room = socket.handshake.currentUser.username;
+            // socket.join(room);
+
+            actualConnections[socket.handshake.currentUser] = socket.id;
+
+            socket.broadcast.emit('addConnection', socket.handshake.currentUser);
+            //
+            // socket.emit('stateInitial', actualConnections, {
+            //     username    : socket.handshake.currentUser,
+            //     connectionId: socket.id
+            // });
 
 
-        socket.on('message', function (text) {
-            console.log(text, 'message');
-            socket.broadcast.emit('message', socket.handshake.currentUser, text);
-            socket.emit('message', socket.handshake.currentUser, text)
-        });
+            Message.find({$or: [{'sender': socket.handshake.currentUser}, {'receiver': socket.handshake.currentUser}]})
+                .then((privateMessages) => {
+                    socket.emit('initialMessagesBackup', privateMessages)
+                }).catch((err) => console.log(err, 'error'));
 
-        socket.on('private', function (message) {
-            console.log(message, 'message');
-            //find connectionId by username
-            let receiverConnectionId = actualConnections[message.receiver];
-            let senderConnectionId = actualConnections[message.sender];
-            //send message co receiver
-            io.sockets.connected[receiverConnectionId].emit('private', message);
-            io.sockets.connected[senderConnectionId].emit('private', message);
-            // let privateMessage = new Message({
-            //     text    : message,
-            //     sender  : sender.username,
-            //     receiver: receiver.username
-            // }).save()
-            //     .then(pmHelper.getAllMessages)
-            //     .then((messages) => console.log(messages, 'messages'));
-        });
 
-        socket.on('disconnect', function () {
-            console.log('disconnect');
-            socket.broadcast.emit('leave', socket.handshake.currentUser.username);
-            delete actualConnections[socket.handshake.currentUser.username];
-        });
+            // socket.on('message', function (text) {
+            //     console.log(text, 'message');
+            //     socket.broadcast.emit('message', socket.handshake.currentUser, text);
+            //     socket.emit('message', socket.handshake.currentUser, text)
+            // });
 
-        // io.sockets.connected[socket.id].emit('private', socket.handshake.currentUser.username);
+            socket.on('message', function (message) {
+                console.log(message, 'message');
 
-        // io.sockets.to(room).emit('message', socket.handshake.currentUser.username, 'testRoom');
+                new Message({
+                    text    : message['text'],
+                    sender  : message['sender'],
+                    receiver: message['receiver']
+                })
+                    .save()
+                    .then((message) => {
+                            if (!message) return console.log('error, no message');
 
-    });
+                            if (message.receiver == 'public') {
+                                socket.broadcast.emit('message', message);
+                            } else {
+                                io.sockets.connected[actualConnections[message.receiver]].emit('message', message);
+                            }
+                            socket.emit('message', message);
+                        }
+                    );
+
+            });
+
+            socket.on('connected', function () {
+                socket.emit('initialization', {
+                    currentUser      : socket.handshake.currentUser,
+                    actualConnections: actualConnections //временно все, пока нет личных контактов
+                })
+            });
+
+            socket.on('disconnect', function () {
+                console.log('disconnect');
+                socket.broadcast.emit('disconnected', socket.handshake.currentUser);
+                delete actualConnections[socket.handshake.currentUser];
+            });
+
+            // io.sockets.connected[socket.id].emit('private', socket.handshake.currentUser.username);
+
+            // io.sockets.to(room).emit('message', socket.handshake.currentUser.username, 'testRoom');
+
+        }
+    )
+    ;
 
 
     return io;
 
-};
+}
+;
 

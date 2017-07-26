@@ -32,6 +32,6 @@
     background-color: beige;
 }
 
-/*.active {*/
-    /*color: brown;*/
-/*}*/
+.active {
+    color: brown;
+}

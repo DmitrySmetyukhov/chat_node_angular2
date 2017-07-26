@@ -10,92 +10,13 @@
 
         <button (click)="disconnect()" *ngIf="socketService.connectionState.isConnected">disconnect</button>
         <button (click)="connect()" *ngIf="!socketService.connectionState.isConnected">connect</button>
-        <!--<ul *ngIf="socketService.messages">-->
-        <!--<li *ngFor="let obj of socketService.messages">-->
-        <!--{{obj.message}}-->
-        <!--{{obj.user | json}}-->
-        <!--</li>-->
-        <!--</ul>-->
-        <!--</div>-->
-        <!--<div class="col-md-2">-->
-        <!--<ul *ngIf="socketService.actualConnections">-->
-        <!--<li *ngFor="let key of objectKeys(socketService.actualConnections)">-->
-        <!--{{key}}-->
-        <!--{{socketService.actualConnections[key]}}-->
-        <!--</li>-->
-        <!--</ul>-->
     </div>
 
 
     <div class="col-md-5">
         <accordion>
 
-            <accordion-group #group>
-                <div accordion-heading>
-                    Public messages
-                    <i class="pull-right float-xs-right glyphicon"
-                       [ngClass]="{'glyphicon-chevron-down': group?.isOpen, 'glyphicon-chevron-right': !group?.isOpen}"></i>
-                </div>
 
-                <ul>
-                    <li *ngFor="let obj of socketService.messages">
-                        {{obj.user | json}}:
-                        {{obj.message}}
-                    </li>
-                </ul>
-            </accordion-group>
-
-
-            <accordion-group>
-                <div accordion-heading>
-                    Private messages
-                </div>
-                <div class="row">
-                    <ul>
-                        <li *ngFor="let obj of socketService.privateMessages">
-                            {{obj.user}}
-                            {{obj.message}}
-                        </li>
-                    </ul>
-                </div>
-            </accordion-group>
-
-            <accordion-group>
-                <div accordion-heading>
-                    message form
-                </div>
-                <div class="row">
-                    <div class="col-md-4">
-                        Message to
-                        <span *ngIf="socketService.adresat">{{socketService.adresat.username}}</span>
-                        <span *ngIf="!socketService.adresat"> all</span>
-                        <!--<form [formGroup]="messageForm" (ngSubmit)="onSubmit(messageForm)">-->
-                        <!--Message:-->
-                        <!--<input-->
-                        <!--type="text"-->
-                        <!--formControlName="newMessage"-->
-                        <!--&gt;-->
-                        <!--</form>-->
-                    </div>
-                    <div class="col-md-6">
-
-                        <ul *ngIf="socketService.actualConnections">
-                            <li>
-                                <a href="#" (click)="selectUser(null, $event)">all</a>
-                            </li>
-                            <li *ngFor="let key of objectKeys(socketService.actualConnections)"
-                            >
-                                <a href="#" (click)="selectUser({
-                                    connectionId: socketService.actualConnections[key],
-                                    username: key
-                                }, $event)">{{key}}</a>
-                                {{socketService.actualConnections[key]}}
-                            </li>
-                        </ul>
-                    </div>
-
-                </div>
-            </accordion-group>
 
 
             <accordion-group>
@@ -104,48 +25,35 @@
                 </div>
                 <div class="row platform">
                     <div class="col-md-3 users-list">
-                        users
-                        <ul *ngIf="socketService.actualConnections">
-                            <li>
-                                <a href="#" (click)="selectUser(null, $event)">all</a>
-                            </li>
-                            <li *ngFor="let key of objectKeys(socketService.actualConnections)"
-                            >
-                                <a href="#"
-                                   (click)="selectUser(key, $event)">{{key}} </a>
-
+                        connections
+                        <ul>
+                            <li *ngFor="let key of objectKeys(socketService.actualConnections)">
+                                <a href="#" (click)="selectUser(key, $event)" [ngClass]="{'active': selectedOpponent == key }">{{key}}</a>
                             </li>
                         </ul>
+                        <!--<ul *ngIf="socketService.actualConnections">-->
+                            <!--<li>-->
+                                <!--<a href="#" (click)="selectUser(null, $event)">all</a>-->
+                            <!--</li>-->
+                            <!--<li *ngFor="let key of objectKeys(socketService.actualConnections)"-->
+                            <!--&gt;-->
+                                <!--<a href="#"-->
+                                   <!--(click)="selectUser(key, $event)">{{key}} </a>-->
+
+                            <!--</li>-->
+                        <!--</ul>-->
                     </div>
                     <div class="col-md-9 chat">
                         <div class="chat-field">
-                            <div *ngIf="isPrivateRoom">
-                                private
-                                <!--<div>{{socketService.adresat.username}}</div>-->
-                                <ul *ngIf="socketService.currentRoomMessages">
-                                    <li *ngFor="let message of socketService.currentRoomMessages">
-                                        {{message | json}}
-                                    </li>
-                                </ul>
+                            chat field
 
-                            </div>
-                            <div *ngIf="!isPrivateRoom">
-                                <h4>Public chat</h4>
-                                <ul>
-                                    <li *ngFor="let message of socketService.messages">
-                                        {{message | json}}
-                                    </li>
-                                </ul>
-                            </div>
                         </div>
                         <div class="messages-field">
-                            <!--messages-->
                             <form [formGroup]="messageForm" (ngSubmit)="onSubmit(messageForm)">
-
                                 <textarea
                                         class="message-box"
                                         type="text"
-                                        formControlName="text"
+                                        formControlName="messageText"
                                         (keydown)="onKey($event, messageForm)"
                                 ></textarea>
                             </form>

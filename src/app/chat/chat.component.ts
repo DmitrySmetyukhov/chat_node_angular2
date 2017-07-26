@@ -1,6 +1,7 @@
 import {Component, OnInit} from "@angular/core";
 import {SocketIoService} from "../shared/services/socket-io.service";
 import {FormGroup, FormBuilder, Validators} from "@angular/forms";
+import {Message} from "../shared/models/message";
 
 
 @Component({
@@ -14,7 +15,7 @@ export class ChatComponent implements OnInit {
     text;
     privateMessages;
     isPrivateRoom;
-    receiver;
+    selectedOpponent = 'public';
 
 
     constructor(private socketService: SocketIoService, private fb: FormBuilder) {
@@ -28,39 +29,35 @@ export class ChatComponent implements OnInit {
 
     buildForm() {
         this.messageForm = this.fb.group({
-            text: [this.text, [Validators.required]]
+            messageText: [this.text, [Validators.required]]
         })
     }
 
     onSubmit(form) {
-        console.log(form, 'form')
         if (form.invalid) return;
-        // if (!this.socketService.adresat) {
-        //     this.socketService.emitToAll(form.value.newMessage);
-        // } else {
-            this.socketService.sendPrivateMessage(form.text, this.receiver);
 
-        // }
+        let message = new Message(form.value.messageText, this.socketService.connectionState['currentUser'], this.selectedOpponent);
+        this.socketService.sendMessage(message);
 
         form.reset();
     }
 
     onKey(event: KeyboardEvent, form) {
-        if (event.key === 'Enter') {
+        if (event.key === 'Enter' && !form.value.messageText) {
+            event.preventDefault();
+        } else if(event.key === 'Enter'){
             this.onSubmit(form);
+            event.preventDefault();
         }
     }
 
-    selectUser(receiver, event) {
+    selectUser(selectedOpponent, event) {
         event.preventDefault();
-        this.receiver = receiver || 'public';
-        this.isPrivateRoom = !!receiver;
-        // this.socketService.adresat = connection;
-        this.socketService.getPrivateRoomMessages(receiver || 'public');
+        this.selectedOpponent = selectedOpponent;
     }
 
     connect() {
-        this.socketService.connect();
+        this.socketService.setConnection();
     }
 
     disconnect() {
