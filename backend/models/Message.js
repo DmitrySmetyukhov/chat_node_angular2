@@ -24,5 +24,5 @@ let schema = new Schema({
     }
 });
 
-exports.Message = mongoose.model('PrivateMessage', schema);
+exports.Message = mongoose.model('Message', schema);
 

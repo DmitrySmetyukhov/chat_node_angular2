@@ -13,8 +13,7 @@ export class ChatComponent implements OnInit {
     objectKeys = Object.keys;
     messageForm: FormGroup;
     text;
-    privateMessages;
-    isPrivateRoom;
+    currentMessagesList = [];
     selectedOpponent = 'public';
 
 
@@ -36,7 +35,7 @@ export class ChatComponent implements OnInit {
     onSubmit(form) {
         if (form.invalid) return;
 
-        let message = new Message(form.value.messageText, this.socketService.connectionState['currentUser'], this.selectedOpponent);
+        let message = new Message(form.value.messageText, this.socketService.connectionState['currentUser'], this.socketService.selectedOpponent);
         this.socketService.sendMessage(message);
 
         form.reset();
@@ -45,7 +44,7 @@ export class ChatComponent implements OnInit {
     onKey(event: KeyboardEvent, form) {
         if (event.key === 'Enter' && !form.value.messageText) {
             event.preventDefault();
-        } else if(event.key === 'Enter'){
+        } else if (event.key === 'Enter') {
             this.onSubmit(form);
             event.preventDefault();
         }
@@ -53,7 +52,15 @@ export class ChatComponent implements OnInit {
 
     selectUser(selectedOpponent, event) {
         event.preventDefault();
-        this.selectedOpponent = selectedOpponent;
+        this.socketService.selectedOpponent = selectedOpponent;
+        this.socketService.getCurrentMessagesList()
+        // this.currentMessagesList = this.socketService.messages.filter((message) => {
+        //     return message.sender == selectedOpponent || message.receiver == selectedOpponent
+        // });
+
+        console.log(this.socketService.selectedOpponent, 'this.socketService.selectedOpponent ')
+
+        console.log(this.socketService.currentMessagesList, 'currentMessagesList')
     }
 
     connect() {

@@ -14,6 +14,8 @@ export class SocketIoService {
         currentUser: ''
     };
     messages: Message[] = [];
+    currentMessagesList = [];
+    selectedOpponent = 'public';
 
 
     setConnection() {
@@ -33,16 +35,24 @@ export class SocketIoService {
         });
 
         socket.on('initialization', function (initialObject) {
-            //initialObject: {currentUser, connections(usernames of connected users})
             state.connectionState.currentUser = initialObject.currentUser;
             state.clearObjectProps(state.actualConnections);
-            state.actualConnections['all'] = 'public';
+            state.actualConnections['public'] = 'public';
             // передаются все открытые коннекшены
             Object.keys(initialObject.actualConnections).forEach((key) => {
                 if (state.connectionState.currentUser != key) {
                     state.actualConnections[key] = initialObject[key];
                 }
             })
+        });
+
+        socket.on('initialMessagesBackup', function (messages) {
+            state.messages.length = 0;
+            messages.forEach((message) => {
+                state.messages.push(message);
+            });
+
+            console.log(state.messages, 'state.messages')
         });
 
         socket.on('disconnected', function (connection) {
@@ -58,7 +68,10 @@ export class SocketIoService {
 
         socket.on('message', function (message) {
             console.log(message, 'message*');
-            this.messages.push(message);
+            console.log(state.messages, 'arr');
+
+            state.messages.push(message);
+            state.getCurrentMessagesList();
         });
 
 
@@ -77,5 +90,14 @@ export class SocketIoService {
     sendMessage(message: Message) {
         console.log(message, 'sent message');
         this.socket.emit('message', message);
+    }
+
+    getCurrentMessagesList() {
+        this.currentMessagesList.length = 0;
+        this.messages.forEach((message) => {
+            if (message.sender == this.selectedOpponent || message.receiver == this.selectedOpponent) {
+                this.currentMessagesList.push(message);
+            }
+        })
     }
 }

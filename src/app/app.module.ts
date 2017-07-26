@@ -15,6 +15,7 @@ import {ProfileComponent} from "./user/profile.component";
 import {PageNotFoundComponent} from "./404/page-not-found.component";
 import {SocketIoService} from "./shared/services/socket-io.service";
 import {AccordionModule} from "ngx-bootstrap";
+import {MessagesFilter} from "./shared/pipes/messages-filter";
 
 @NgModule({
     declarations: [

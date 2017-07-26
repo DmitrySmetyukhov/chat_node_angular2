@@ -102,38 +102,28 @@ module.exports = function (server) {
 
             // var uuid = require('uuid');
             // var room = uuid.v4();
-
-
             // console.log(socket.adapter.rooms, 'rooms');
-
-            socket.handshake.currentUser = tmpUser.username;
-            // socket.handshake.session = sess;
-            // socket.handshake.session.id = sid;
-
             // var room = socket.handshake.currentUser.username;
             // socket.join(room);
 
+            socket.handshake.currentUser = tmpUser.username;
+
             actualConnections[socket.handshake.currentUser] = socket.id;
-
             socket.broadcast.emit('addConnection', socket.handshake.currentUser);
-            //
-            // socket.emit('stateInitial', actualConnections, {
-            //     username    : socket.handshake.currentUser,
-            //     connectionId: socket.id
-            // });
 
 
-            Message.find({$or: [{'sender': socket.handshake.currentUser}, {'receiver': socket.handshake.currentUser}]})
-                .then((privateMessages) => {
-                    socket.emit('initialMessagesBackup', privateMessages)
+            Message.find(
+                {
+                    $or: [
+                        {'sender': socket.handshake.currentUser},
+                        {'receiver': socket.handshake.currentUser},
+                        {'receiver': 'public'}
+                    ]
+                })
+                .then((messages) => {
+                    socket.emit('initialMessagesBackup', messages)
                 }).catch((err) => console.log(err, 'error'));
 
-
-            // socket.on('message', function (text) {
-            //     console.log(text, 'message');
-            //     socket.broadcast.emit('message', socket.handshake.currentUser, text);
-            //     socket.emit('message', socket.handshake.currentUser, text)
-            // });
 
             socket.on('message', function (message) {
                 console.log(message, 'message');

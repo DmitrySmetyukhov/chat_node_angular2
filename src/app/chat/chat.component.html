@@ -15,10 +15,6 @@
 
     <div class="col-md-5">
         <accordion>
-
-
-
-
             <accordion-group>
                 <div accordion-heading>
                     Platform
@@ -28,24 +24,19 @@
                         connections
                         <ul>
                             <li *ngFor="let key of objectKeys(socketService.actualConnections)">
-                                <a href="#" (click)="selectUser(key, $event)" [ngClass]="{'active': selectedOpponent == key }">{{key}}</a>
+                                <a href="#" (click)="selectUser(key, $event)" [ngClass]="{'active': socketService.selectedOpponent == key }">{{key}}</a>
                             </li>
                         </ul>
-                        <!--<ul *ngIf="socketService.actualConnections">-->
-                            <!--<li>-->
-                                <!--<a href="#" (click)="selectUser(null, $event)">all</a>-->
-                            <!--</li>-->
-                            <!--<li *ngFor="let key of objectKeys(socketService.actualConnections)"-->
-                            <!--&gt;-->
-                                <!--<a href="#"-->
-                                   <!--(click)="selectUser(key, $event)">{{key}} </a>-->
 
-                            <!--</li>-->
-                        <!--</ul>-->
                     </div>
                     <div class="col-md-9 chat">
                         <div class="chat-field">
-                            chat field
+                            <div>{{socketService.selectedOpponent}}</div>
+                            <ul>
+                                <li *ngFor="let message of socketService.currentMessagesList">
+                                    {{message | json}}
+                                </li>
+                            </ul>
 
                         </div>
                         <div class="messages-field">
