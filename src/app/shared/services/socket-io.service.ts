@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import * as io from 'socket.io-client';
+import {Message} from "../models/message";
 
 
 @Injectable()
@@ -65,6 +66,19 @@ export class SocketIoService {
             }
         });
 
+        this.socket.on('initialMessagesBackup', function (privateM, publicM) {
+            privateMessages.length = 0;
+            privateM.forEach((message) => {
+                privateMessages.push(message)
+            });
+
+            console.log(privateMessages, 'privateMessages backuped');
+            state.getPrivateRoomMessages(connectionState.username);
+
+            // console.log(publicMessages, 'publicMessages');
+            // console.log(privateMessages, 'privateMessages');
+        });
+
 
         this.socket.on('newConnection', function (connectionInfo) {
             connections[connectionInfo.username] = connectionInfo.connectionId;
@@ -85,26 +99,25 @@ export class SocketIoService {
     }
 
 
-    getPrivateRoomMessages(username){
+    getPrivateRoomMessages(username) {
         this.currentRoomMessages.length = 0;
         this.privateMessages.forEach((message) => {
-            if(message['username'] == username){
+            if (message['receiver'] == username || message['sender'] == username) {
                 this.currentRoomMessages.push(message);
             }
         });
+
+        console.log(this.currentRoomMessages, 'curRumMess')
     }
 
     emitToAll(message) {
         this.socket.emit('message', message);
     }
 
-    sendPrivateMessage(message) {
-        let sender = {
-            connectionId: this.connectionState['connectionId'],
-            username: this.connectionState['username']
-        };
-
-        this.socket.emit('private', message, sender, this.adresat);
+    sendPrivateMessage(text, receiver) {
+        let message = new Message(text, this.connectionState['username'], receiver);
+        console.log(message, 'message');
+        this.socket.emit('private', message);
     }
 
     disconnect() {

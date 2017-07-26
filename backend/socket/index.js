@@ -3,6 +3,8 @@ var cookie = require('cookie');
 var config = require('../config');
 var cookieParser = require('cookie-parser');
 var User = require('../models/user').User;
+var pmHelper = require('../helpers/privateMessages').helper;
+var Message = require('../models/Message').Message;
 var async = require('async');
 var sessionStorage = require('../lib/sessionStore');
 var tmpUser;
@@ -14,23 +16,23 @@ var actualConnections;
 module.exports = function (server) {
 
     function loadSession(sid, callback) {
-        sessionStorage.get(sid, function(err, session){
-            if(arguments.length == 0){
+        sessionStorage.get(sid, function (err, session) {
+            if (arguments.length == 0) {
                 return callback(null, null)
-            }else{
+            } else {
                 return callback(null, session);
             }
         });
     }
 
     function loadUser(session, callback) {
-        if(!session.userId){
+        if (!session.userId) {
             return callback(null, null);
         }
 
-        User.findById(session.userId, function(err, user){
-            if(err) return callback(err);
-            if(!user) return callback(null, null);
+        User.findById(session.userId, function (err, user) {
+            if (err) return callback(err);
+            if (!user) return callback(null, null);
             callback(null, user);
         })
     }
@@ -94,9 +96,6 @@ module.exports = function (server) {
     });
 
 
-
-
-
     io.sockets.on('connection', function (socket) {
 
         console.log('connected');
@@ -107,42 +106,56 @@ module.exports = function (server) {
 
         // console.log(socket.adapter.rooms, 'rooms');
 
-        socket.handshake.currentUser = tmpUser;
-        socket.handshake.session = sess;
-        socket.handshake.session.id = sid;
+        socket.handshake.currentUser = tmpUser.username;
+        // socket.handshake.session = sess;
+        // socket.handshake.session.id = sid;
 
         // var room = socket.handshake.currentUser.username;
         // socket.join(room);
 
-        actualConnections[ socket.handshake.currentUser.username] = socket.id;
+        actualConnections[socket.handshake.currentUser] = socket.id;
 
         socket.broadcast.emit('newConnection', {
-            username: socket.handshake.currentUser.username,
+            username    : socket.handshake.currentUser,
             connectionId: socket.id
         });
 
         socket.emit('stateInitial', actualConnections, {
-            username: socket.handshake.currentUser.username,
+            username    : socket.handshake.currentUser,
             connectionId: socket.id
         });
 
 
+        Message.find({$or: [{'sender': socket.handshake.currentUser}, {'receiver': socket.handshake.currentUser}]})
+            .then((privateMessages) => {
+                socket.emit('initialMessagesBackup', privateMessages)
+            }).catch((err) => console.log(err, 'error'));
+
+
         socket.on('message', function (text) {
             console.log(text, 'message');
-            socket.broadcast.emit('message', socket.handshake.currentUser.username, text);
-            socket.emit('message', socket.handshake.currentUser.username, text)
+            socket.broadcast.emit('message', socket.handshake.currentUser, text);
+            socket.emit('message', socket.handshake.currentUser, text)
         });
 
-        socket.on('private', function(message, sender, reseiver){
-
-            io.sockets.connected[reseiver.connectionId].emit('private',
-                {direction: 'receive', text: message}, sender.username
-            );
-
-            io.sockets.connected[sender.connectionId].emit('private', {direction: 'send', text: message}, reseiver.username)
+        socket.on('private', function (message) {
+            console.log(message, 'message');
+            //find connectionId by username
+            let receiverConnectionId = actualConnections[message.receiver];
+            let senderConnectionId = actualConnections[message.sender];
+            //send message co receiver
+            io.sockets.connected[receiverConnectionId].emit('private', message);
+            io.sockets.connected[senderConnectionId].emit('private', message);
+            // let privateMessage = new Message({
+            //     text    : message,
+            //     sender  : sender.username,
+            //     receiver: receiver.username
+            // }).save()
+            //     .then(pmHelper.getAllMessages)
+            //     .then((messages) => console.log(messages, 'messages'));
         });
 
-        socket.on('disconnect', function(){
+        socket.on('disconnect', function () {
             console.log('disconnect');
             socket.broadcast.emit('leave', socket.handshake.currentUser.username);
             delete actualConnections[socket.handshake.currentUser.username];
@@ -153,7 +166,6 @@ module.exports = function (server) {
         // io.sockets.to(room).emit('message', socket.handshake.currentUser.username, 'testRoom');
 
     });
-
 
 
     return io;

@@ -11,8 +11,10 @@ import {FormGroup, FormBuilder, Validators} from "@angular/forms";
 export class ChatComponent implements OnInit {
     objectKeys = Object.keys;
     messageForm: FormGroup;
-    newMessage;
+    text;
     privateMessages;
+    isPrivateRoom;
+    receiver;
 
 
     constructor(private socketService: SocketIoService, private fb: FormBuilder) {
@@ -26,17 +28,19 @@ export class ChatComponent implements OnInit {
 
     buildForm() {
         this.messageForm = this.fb.group({
-            newMessage: [this.newMessage, [Validators.required]]
+            text: [this.text, [Validators.required]]
         })
     }
 
     onSubmit(form) {
+        console.log(form, 'form')
         if (form.invalid) return;
-        if (!this.socketService.adresat) {
-            this.socketService.emitToAll(form.value.newMessage);
-        } else {
-            this.socketService.sendPrivateMessage(form.value.newMessage)
-        }
+        // if (!this.socketService.adresat) {
+        //     this.socketService.emitToAll(form.value.newMessage);
+        // } else {
+            this.socketService.sendPrivateMessage(form.text, this.receiver);
+
+        // }
 
         form.reset();
     }
@@ -47,13 +51,12 @@ export class ChatComponent implements OnInit {
         }
     }
 
-    selectUser(connection, event) {
+    selectUser(receiver, event) {
         event.preventDefault();
-        this.socketService.adresat = connection;
-
-        if (this.socketService.adresat) {
-            this.socketService.getPrivateRoomMessages(this.socketService.adresat['username']);
-        }
+        this.receiver = receiver || 'public';
+        this.isPrivateRoom = !!receiver;
+        // this.socketService.adresat = connection;
+        this.socketService.getPrivateRoomMessages(receiver || 'public');
     }
 
     connect() {

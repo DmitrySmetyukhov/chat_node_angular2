@@ -112,18 +112,16 @@
                             <li *ngFor="let key of objectKeys(socketService.actualConnections)"
                             >
                                 <a href="#"
-                                   (click)="selectUser({
-                                    connectionId: socketService.actualConnections[key],
-                                    username: key
-                                }, $event)">{{key}} </a>
+                                   (click)="selectUser(key, $event)">{{key}} </a>
 
                             </li>
                         </ul>
                     </div>
                     <div class="col-md-9 chat">
                         <div class="chat-field">
-                            <div *ngIf="socketService.adresat">
-                                <div>{{socketService.adresat.username}}</div>
+                            <div *ngIf="isPrivateRoom">
+                                private
+                                <!--<div>{{socketService.adresat.username}}</div>-->
                                 <ul *ngIf="socketService.currentRoomMessages">
                                     <li *ngFor="let message of socketService.currentRoomMessages">
                                         {{message | json}}
@@ -131,7 +129,7 @@
                                 </ul>
 
                             </div>
-                            <div *ngIf="!socketService.adresat">
+                            <div *ngIf="!isPrivateRoom">
                                 <h4>Public chat</h4>
                                 <ul>
                                     <li *ngFor="let message of socketService.messages">
@@ -147,7 +145,7 @@
                                 <textarea
                                         class="message-box"
                                         type="text"
-                                        formControlName="newMessage"
+                                        formControlName="text"
                                         (keydown)="onKey($event, messageForm)"
                                 ></textarea>
                             </form>
