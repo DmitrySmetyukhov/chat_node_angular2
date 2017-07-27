@@ -28,16 +28,24 @@
                             </li>
                         </ul>
 
+                        Rooms:
+                        <a href="#" (click)="createRoom()">create room</a>
+                        <ul>
+                        </ul>
+
                     </div>
+
+
                     <div class="col-md-9 chat">
                         <div class="chat-field">
                             <div>{{socketService.selectedOpponent}}</div>
                             <ul>
                                 <li *ngFor="let message of socketService.currentMessagesList">
-                                    {{message | json}}
+                                    {{message.sender}}: ->
+                                    {{message.text}}
+
                                 </li>
                             </ul>
-
                         </div>
                         <div class="messages-field">
                             <form [formGroup]="messageForm" (ngSubmit)="onSubmit(messageForm)">

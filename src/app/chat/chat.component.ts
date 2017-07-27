@@ -70,4 +70,8 @@ export class ChatComponent implements OnInit {
     disconnect() {
         this.socketService.disconnect();
     }
+
+    createRoom() {
+
+    }
 }
