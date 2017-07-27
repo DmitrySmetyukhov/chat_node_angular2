@@ -7,7 +7,7 @@ import {BsModalService, BsModalRef} from "ngx-bootstrap/modal";
 
 @Component({
     templateUrl: 'chat.component.html',
-    styleUrls: ['chat.css', 'platform.css']
+    styleUrls: ['chat.css', 'platform.css', 'modal.css']
 })
 
 export class ChatComponent implements OnInit {
@@ -16,6 +16,8 @@ export class ChatComponent implements OnInit {
     text;
     currentMessagesList = [];
     selectedOpponent = 'public';
+
+    newRoomName: string;
 
     public modalRef: BsModalRef;
 
@@ -69,11 +71,30 @@ export class ChatComponent implements OnInit {
     }
 
     public openModal(template: TemplateRef<any>) {
+        this.socketService.freeUsers = Object.keys(this.socketService.actualConnections);
+        this.socketService.addedUsers = [];
         this.modalRef = this.modalService.show(template);
     }
 
-    test() {
-        console.log('test');
+    addUserToRoom(user: string, event) {
+        event.preventDefault();
+        this.socketService.addedUsers.push(user);
+        this.socketService.freeUsers = this.socketService.freeUsers.filter((username) => {
+            return username !== user;
+        });
+        console.log(user);
+    }
+
+    removeFromRoom(user: string, event) {
+        event.preventDefault();
+        this.socketService.freeUsers.push(user);
+        this.socketService.addedUsers = this.socketService.addedUsers.filter((username) => {
+            return username !== user;
+        })
+    }
+
+    test(roomName: string) {
+        console.log(roomName, 'roomName');
     }
 
 }

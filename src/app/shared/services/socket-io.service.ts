@@ -17,6 +17,11 @@ export class SocketIoService {
     currentMessagesList = [];
     selectedOpponent = 'public';
 
+    // create rooms
+    freeUsers: string[];
+    addedUsers: string[];
+    // end create rooms
+
 
     setConnection() {
         if (this.connectionState['isConnected']) return;

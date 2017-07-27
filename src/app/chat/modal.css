@@ -1,0 +1,16 @@
+.add-users {
+    height: 100px;
+}
+
+.in-room {
+    background-color: yellowgreen;
+    overflow: scroll;
+    height: 100%;
+}
+
+.not-in-room {
+    background-color: bisque;
+    overflow: scroll;
+    height: 100%;
+}
+

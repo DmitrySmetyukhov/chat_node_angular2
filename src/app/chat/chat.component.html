@@ -24,7 +24,8 @@
                         connections
                         <ul>
                             <li *ngFor="let key of objectKeys(socketService.actualConnections)">
-                                <a href="#" (click)="selectUser(key, $event)" [ngClass]="{'active': socketService.selectedOpponent == key }">{{key}}</a>
+                                <a href="#" (click)="selectUser(key, $event)"
+                                   [ngClass]="{'active': socketService.selectedOpponent == key }">{{key}}</a>
                             </li>
                         </ul>
 
@@ -66,8 +67,6 @@
 </div>
 
 
-
-
 <template #template>
     <div class="modal-header">
         <h4 class="modal-title pull-left">Modal</h4>
@@ -76,8 +75,31 @@
         </button>
     </div>
     <div class="modal-body">
-        This is a modal.
-        <button (click)="test()">test</button>
+        Create room:
+        Room name: <input type="text" [(ngModel)]="newRoomName"/>
+        <div class="row add-users">
+            <div class="col-md-6 not-in-room">
+                All Users:
+                <ul>
+                    <li *ngFor="let user of socketService.freeUsers">
+                        {{user}}
+                        <a href="#" (click)="addUserToRoom(user, $event)">+</a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-md-6 in-room">
+                Added users
+                <ul>
+                    <li *ngFor="let user of socketService.addedUsers">
+                        {{user}}
+                        <a href="#" (click)="removeFromRoom(user, $event)">-</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <button (click)="test(newRoomName)">test</button>
     </div>
 </template>
 
