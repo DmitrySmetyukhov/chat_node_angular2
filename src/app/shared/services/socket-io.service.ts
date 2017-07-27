@@ -51,12 +51,9 @@ export class SocketIoService {
             messages.forEach((message) => {
                 state.messages.push(message);
             });
-
-            console.log(state.messages, 'state.messages')
         });
 
         socket.on('disconnected', function (connection) {
-            console.log(connection, 'disconnected connection')
             delete state.actualConnections[connection];
         });
 
@@ -67,9 +64,6 @@ export class SocketIoService {
         //*******************************************************************//
 
         socket.on('message', function (message) {
-            console.log(message, 'message*');
-            console.log(state.messages, 'arr');
-
             state.messages.push(message);
             state.getCurrentMessagesList();
         });
@@ -88,7 +82,6 @@ export class SocketIoService {
     }
 
     sendMessage(message: Message) {
-        console.log(message, 'sent message');
         this.socket.emit('message', message);
     }
 

@@ -29,7 +29,7 @@
                         </ul>
 
                         Rooms:
-                        <a href="#" (click)="createRoom()">create room</a>
+                        <button type="button" class="btn btn-primary" (click)="openModal(template)">Create room</button>
                         <ul>
                         </ul>
 
@@ -64,5 +64,21 @@
         </accordion>
     </div>
 </div>
+
+
+
+
+<template #template>
+    <div class="modal-header">
+        <h4 class="modal-title pull-left">Modal</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        This is a modal.
+        <button (click)="test()">test</button>
+    </div>
+</template>
 
 

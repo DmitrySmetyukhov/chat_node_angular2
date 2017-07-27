@@ -1,7 +1,8 @@
-import {Component, OnInit} from "@angular/core";
+import {Component, OnInit, TemplateRef} from "@angular/core";
 import {SocketIoService} from "../shared/services/socket-io.service";
 import {FormGroup, FormBuilder, Validators} from "@angular/forms";
 import {Message} from "../shared/models/message";
+import {BsModalService, BsModalRef} from "ngx-bootstrap/modal";
 
 
 @Component({
@@ -16,9 +17,12 @@ export class ChatComponent implements OnInit {
     currentMessagesList = [];
     selectedOpponent = 'public';
 
+    public modalRef: BsModalRef;
 
-    constructor(private socketService: SocketIoService, private fb: FormBuilder) {
 
+    constructor(private socketService: SocketIoService,
+                private fb: FormBuilder,
+                private modalService: BsModalService) {
     }
 
     ngOnInit() {
@@ -53,14 +57,7 @@ export class ChatComponent implements OnInit {
     selectUser(selectedOpponent, event) {
         event.preventDefault();
         this.socketService.selectedOpponent = selectedOpponent;
-        this.socketService.getCurrentMessagesList()
-        // this.currentMessagesList = this.socketService.messages.filter((message) => {
-        //     return message.sender == selectedOpponent || message.receiver == selectedOpponent
-        // });
-
-        console.log(this.socketService.selectedOpponent, 'this.socketService.selectedOpponent ')
-
-        console.log(this.socketService.currentMessagesList, 'currentMessagesList')
+        this.socketService.getCurrentMessagesList();
     }
 
     connect() {
@@ -71,7 +68,12 @@ export class ChatComponent implements OnInit {
         this.socketService.disconnect();
     }
 
-    createRoom() {
-
+    public openModal(template: TemplateRef<any>) {
+        this.modalRef = this.modalService.show(template);
     }
+
+    test() {
+        console.log('test');
+    }
+
 }

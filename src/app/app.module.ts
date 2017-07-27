@@ -14,8 +14,8 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {ProfileComponent} from "./user/profile.component";
 import {PageNotFoundComponent} from "./404/page-not-found.component";
 import {SocketIoService} from "./shared/services/socket-io.service";
-import {AccordionModule} from "ngx-bootstrap";
-import {MessagesFilter} from "./shared/pipes/messages-filter";
+import {AccordionModule, ModalModule} from "ngx-bootstrap";
+
 
 @NgModule({
     declarations: [
@@ -32,7 +32,8 @@ import {MessagesFilter} from "./shared/pipes/messages-filter";
         HttpModule,
         FormsModule,
         AccordionModule.forRoot(),
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        ModalModule.forRoot()
     ],
     providers: [
         HttpService,
