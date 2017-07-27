@@ -73,6 +73,7 @@ export class ChatComponent implements OnInit {
     public openModal(template: TemplateRef<any>) {
         this.socketService.freeUsers = Object.keys(this.socketService.actualConnections);
         this.socketService.addedUsers = [];
+        this.newRoomName = null;
         this.modalRef = this.modalService.show(template);
     }
 
@@ -93,8 +94,9 @@ export class ChatComponent implements OnInit {
         })
     }
 
-    test(roomName: string) {
-        console.log(roomName, 'roomName');
+    createRoom(roomName: string) {
+        this.socketService.createRoom(roomName);
+        this.modalRef.hide();
     }
 
 }

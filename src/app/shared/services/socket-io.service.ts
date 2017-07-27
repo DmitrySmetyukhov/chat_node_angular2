@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import * as io from 'socket.io-client';
 import {Message} from "../models/message";
+import {Room} from "../models/room";
 
 
 @Injectable()
@@ -97,5 +98,10 @@ export class SocketIoService {
                 this.currentMessagesList.push(message);
             }
         })
+    }
+
+    createRoom(name: string) {
+        let room = new Room(name, this.addedUsers);
+        this.socket.emit('createRoom', room);
     }
 }

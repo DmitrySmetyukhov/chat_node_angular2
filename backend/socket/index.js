@@ -161,6 +161,10 @@ module.exports = function (server) {
                 delete actualConnections[socket.handshake.currentUser];
             });
 
+            socket.on('createRoom', function (room) {
+                console.log(room, 'room');
+            });
+
             // io.sockets.connected[socket.id].emit('private', socket.handshake.currentUser.username);
 
             // io.sockets.to(room).emit('message', socket.handshake.currentUser.username, 'testRoom');

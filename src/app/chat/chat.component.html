@@ -75,7 +75,6 @@
         </button>
     </div>
     <div class="modal-body">
-        Create room:
         Room name: <input type="text" [(ngModel)]="newRoomName"/>
         <div class="row add-users">
             <div class="col-md-6 not-in-room">
@@ -99,7 +98,10 @@
             </div>
         </div>
 
-        <button (click)="test(newRoomName)">test</button>
+        <button
+                [disabled]="!newRoomName"
+                (click)="createRoom(newRoomName)"
+        >create</button>
     </div>
 </template>
 
